@@ -37,7 +37,7 @@ function Film(id, title, isFavourite, watchDate, score) {
     this.score = score;
 
     this.toString = function() {
-        return `${this.id}, ${this.title}, ${this.isFavourite}, ${isNaN(this.watchDate) ? undefined : dayjs(this.watchDate).format('DD-MM-YYYY')}, ${this.score}`;
+        return `Id: ${this.id}, Title: ${this.title}, Favorite: ${this.isFavourite}, Watch date: ${isNaN(this.watchDate) ? undefined : dayjs(this.watchDate).format('MMMM DD, YYYY')}, Score: ${this.score}`;
     }
 }
 

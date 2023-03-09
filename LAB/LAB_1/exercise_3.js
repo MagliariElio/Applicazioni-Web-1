@@ -20,8 +20,9 @@ deleteFilm: deletes a Film from the FilmLibrary based on an Id received by param
 
 resetWatchedFilms: deletes the Watch date of all the Films in the FilmLibrary.
 
-getRated: selects the films that do have a defined score. Only movies with an assigned score should be
-returned, ordered by decreasing score. After filtering the Films Library shown in exercise 1, the method should print:
+getRated: selects the films that do have a defined score. Only movies with an assigned score should be returned, ordered by decreasing score. 
+
+After filtering the Films Library shown in exercise 1, the method should print:
 ***** Films filtered, only the rated ones *****
 Id: 1, Title: Pulp Fiction, Favorite: true, Watch date: March 10, 2023, Score: 5
 Id: 2, Title: 21 Grams, Favorite: true, Watch date: March 17, 2023, Score: 4
@@ -41,7 +42,7 @@ function Film(id, title, isFavourite, watchDate, score) {
     this.score = score;
 
     this.toString = function () {
-        return `${this.id}, ${this.title}, ${this.isFavourite}, ${isNaN(this.watchDate) ? undefined : dayjs(this.watchDate).format('DD-MM-YYYY')}, ${this.score}`;
+        return `Id: ${this.id}, Title: ${this.title}, Favorite: ${this.isFavourite}, Watch date: ${isNaN(this.watchDate) ? undefined : dayjs(this.watchDate).format('MMMM DD, YYYY')}, Score: ${this.score}`;
     }
 }
 
@@ -53,20 +54,37 @@ function FilmLibrary() {
     }
 
     this.sortByDate = () => {
-        return [...this.listFilms].sort( (firstItem, secondItem) => { dayjs(firstItem.watchDate).isAfter(secondItem.watchDate) ? 1 : -1 });
+        let list = [...this.listFilms].filter((a) => a.watchDate !== undefined);
+        let listUnwatched = [...this.listFilms].filter((a) => a.watchDate === undefined);
+        list = list.sort((a, b) => (dayjs(a.watchDate).isAfter(b.watchDate) ? 1 : -1)).concat(listUnwatched); 
+        return list;
+    }
+
+    this.deleteFilm = (id) => {
+        this.listFilms.splice(this.listFilms.indexOf(this.listFilms.find((a) => a.id === id)));
     }
 
     this.print = (list) => {
         list.forEach(film => console.log(film.toString()));
     }
+
+    this.resetWatchedFilms = () => {
+        this.listFilms.forEach((a) => (a.watchDate = undefined));
+    }
+
+    this.getRated = (rating) => {
+        return this.listFilms.filter((film) => film.score == rating)
+    }
 }
 
 const films = [
+    new Film(0, "Shrek 3", false, undefined, 1),
     new Film(1, "Pulp Fiction", true, dayjs("20230310"), 5),
     new Film(2, "21 Grams", true, dayjs("20230317"), 4),
-    new Film(3, "Star Wars", false, dayjs("20230410"), undefined),
-    new Film(4, "Matrix", false, dayjs("2023048"), undefined),
+    new Film(3, "Star Wars", false, dayjs("20230410"), 1),
+    new Film(4, "Matrix", false, dayjs("2023048"), 1),
     new Film(5, "Shrek", false, dayjs("20230321"), 3),
+    new Film(6, "Shrek 2", false, undefined, 5)
 ];
 
 
@@ -77,8 +95,29 @@ function main() {
         library.addNewFilm(film);
     }
 
+    console.log("----------------------");
+    console.log("Sort array by Date");
     library.print(library.sortByDate());
 
+    console.log("----------------------");
+
+    console.log("Delete the film with id equal to 5");
+    library.deleteFilm(5);
+    library.print(library.listFilms);
+
+    console.log("----------------------");
+
+    console.log("Resetting the watch property of all movies");
+    library.resetWatchedFilms();
+    library.print(library.listFilms);
+
+    console.log("----------------------");
+    console.log("***** Films filtered, only the rated ones *****");
+    library.print(library.getRated(1));
+    
+    
+    console.log("----------------------");
+    return;
 }
 
 
