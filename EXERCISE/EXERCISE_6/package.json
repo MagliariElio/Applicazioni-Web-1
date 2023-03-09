@@ -1,0 +1,14 @@
+{
+  "name": "exercise_6",
+  "version": "1.0.0",
+  "description": "",
+  "main": "exercise_6.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Elio Magliari",
+  "license": "ISC",
+  "dependencies": {
+    "sqlite3": "^5.1.4"
+  }
+}
