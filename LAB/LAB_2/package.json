@@ -1,7 +1,6 @@
 {
   "name": "lab_2",
   "version": "1.0.0",
-  "description": "",
   "main": "exercise_1.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -11,5 +10,6 @@
   "dependencies": {
     "sqlite3": "^5.1.4",
     "dayjs": "^1.11.7"
-  }
+  },
+  "description": ""
 }
