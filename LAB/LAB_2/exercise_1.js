@@ -54,12 +54,11 @@ function FilmLibrary() {
 
             db.all(sql, (err, rows) => {
                 if (err) reject(err);
-                else {
-                    for (let row of rows) {
-                        result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
-                    }
-                    resolve(result);
+                if(rows == undefined) return;
+                for (let row of rows) {
+                    result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
                 }
+                resolve(result);
             });
         })
     }
@@ -71,12 +70,11 @@ function FilmLibrary() {
 
             db.all(sql, (err, rows) => {
                 if (err) reject(err);
-                else {
-                    for (let row of rows) {
-                        result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
-                    }
-                    resolve(result);
+                if(rows == undefined) return;
+                for (let row of rows) {
+                    result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
                 }
+                resolve(result);
             })
         })
     }
@@ -94,14 +92,47 @@ function FilmLibrary() {
 
             db.all(sql, [date.format("YYYY-MM-DD")], (err, rows) => {
                 if (err) reject(err);
+                if(rows == undefined) return;
                 for (let row of rows) {
                     result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
                 }
                 resolve(result);
-
             })
         })
     }
+
+    this.getFilmWithRating = async (score) => {
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT id, title, favorite, watchdate, rating FROM films WHERE rating >= ?";
+            let result = [];
+            
+            db.all(sql, score, (err, rows) => {
+                if (err) reject(err);
+                if(rows == undefined) return;
+                for (let row of rows) {
+                    result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
+                }
+                resolve(result);
+            })
+        })
+    }
+
+    this.getFilmWithTitle = async (title) => {
+        return new Promise((resolve, reject) => {
+            const sql = "SELECT id, title, favorite, watchdate, rating FROM films WHERE title like '%' || ? || '%'";
+            let result = [];
+            
+            db.all(sql, title, (err, rows) => {
+                if (err) reject(err);
+                if(rows == undefined) return;
+                for (let row of rows) {
+                    result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
+                }
+                resolve(result);
+            })
+        })
+    }
+
 }
 
 
@@ -124,10 +155,20 @@ async function main() {
         .then(library.print)
         .catch((e) => console.error("Errore gestito: " + e.message));*/
 
-    console.log("Stampa di tutti i film visti prima di oggi");
+    /*console.log("Stampa di tutti i film visti prima di oggi");
     library.getAllFilmWatchedOnSomeDate(dayjs("2023-03-17"))
         .then(library.print)
-        .catch((e) => console.error("Errore gestito: " + e.message));
+        .catch((e) => console.error("Errore gestito: " + e.message));*/
+
+    /*console.log("Stampa di tutti i film con un determinato rating");
+    library.getFilmWithRating(4)
+        .then(library.print)
+        .catch(e => console.error("Errore gestito" + e.message));*/
+
+    console.log("Stampa di tutti i film con un determinato titolo");
+        library.getFilmWithTitle("s")
+            .then(library.print)
+            .catch(e => console.error("Errore gestito" + e.message));
 }
 
 main();
