@@ -5,15 +5,15 @@ const sqlite = require("sqlite3");
 const db = new sqlite.Database('films.sqlite', (err) => { if (err) throw err; });
 
 
-function Film(id, title, isFavourite, watchDate, score) {
+function Film(id, title, isFavorite, watchDate, score) {
     this.id = id;
     this.title = title;
-    this.isFavourite = isFavourite === undefined ? false : isFavourite;
+    this.isFavorite = isFavorite === undefined ? false : isFavorite;
     this.watchDate = watchDate;
     this.score = score;
 
     this.toString = function () {
-        return `Id: ${this.id}, Title: ${this.title}, Favorite: ${this.isFavourite}, Watch date: ${isNaN(this.watchDate) ? undefined : dayjs(this.watchDate).format('MMMM DD, YYYY')}, Score: ${this.score}`;
+        return `Id: ${this.id}, Title: ${this.title}, Favorite: ${this.isFavorite}, Watch date: ${isNaN(this.watchDate) ? undefined : dayjs(this.watchDate).format('MMMM DD, YYYY')}, Score: ${this.score}`;
     }
 }
 
@@ -21,7 +21,26 @@ function FilmLibrary() {
     this.listFilms = [];
 
     this.addNewFilm = (film) => {
-        this.listFilms.push(film);
+        return new Promise(async (resolve, reject) => {
+            const sql = "INSERT INTO films(id, title, favorite, watchdate, rating) VALUES(?, ?, ?, ?, ?)";
+            let result = [];
+
+            if (film == undefined) reject("Film is undefinied");
+            this.listFilms = await this.getAllFilms();
+            if (this.listFilms.some(f => f.id == film.id)) reject("Already exists a film with this id");
+
+            db.all(sql, [film.id, film.title, film.isFavorite, film.watchDate, film.rating], (err, rows) => {
+                if (err) reject(err);
+                if (rows == undefined) return;
+                for (let row of rows) {
+                    result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
+                }
+
+                this.listFilms.push(film);
+                //this.print(this.listFilms);
+                resolve(result);
+            });
+        })
     }
 
     this.sortByDate = () => {
@@ -32,7 +51,26 @@ function FilmLibrary() {
     }
 
     this.deleteFilm = (id) => {
-        this.listFilms.splice(this.listFilms.indexOf(this.listFilms.find((a) => a.id === id)));
+        return new Promise(async (resolve, reject) => {
+            const sql = "DELETE FROM films WHERE id = ?";
+            let result = [];
+
+            if (id == undefined) reject("Film is undefinied");
+            this.listFilms = await this.getAllFilms();
+            if (!this.listFilms.some(f => f.id == id)) reject("Any film with this id is there");
+
+            db.all(sql, [id], (err, rows) => {
+                if (err) reject(err);
+                if (rows == undefined) return;
+                for (let row of rows) {
+                    result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
+                }
+
+                /*this.listFilms.splice(this.listFilms.indexOf(this.listFilms.find((a) => a.id === id)));
+                this.print(this.listFilms);*/
+                resolve(result);
+            });
+        })
     }
 
     this.print = (list) => {
@@ -54,7 +92,7 @@ function FilmLibrary() {
 
             db.all(sql, (err, rows) => {
                 if (err) reject(err);
-                if(rows == undefined) return;
+                if (rows == undefined) return;
                 for (let row of rows) {
                     result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
                 }
@@ -70,7 +108,7 @@ function FilmLibrary() {
 
             db.all(sql, (err, rows) => {
                 if (err) reject(err);
-                if(rows == undefined) return;
+                if (rows == undefined) return;
                 for (let row of rows) {
                     result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
                 }
@@ -92,7 +130,7 @@ function FilmLibrary() {
 
             db.all(sql, [date.format("YYYY-MM-DD")], (err, rows) => {
                 if (err) reject(err);
-                if(rows == undefined) return;
+                if (rows == undefined) return;
                 for (let row of rows) {
                     result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
                 }
@@ -105,10 +143,10 @@ function FilmLibrary() {
         return new Promise((resolve, reject) => {
             const sql = "SELECT id, title, favorite, watchdate, rating FROM films WHERE rating >= ?";
             let result = [];
-            
+
             db.all(sql, score, (err, rows) => {
                 if (err) reject(err);
-                if(rows == undefined) return;
+                if (rows == undefined) return;
                 for (let row of rows) {
                     result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
                 }
@@ -121,10 +159,10 @@ function FilmLibrary() {
         return new Promise((resolve, reject) => {
             const sql = "SELECT id, title, favorite, watchdate, rating FROM films WHERE title like '%' || ? || '%'";
             let result = [];
-            
+
             db.all(sql, title, (err, rows) => {
                 if (err) reject(err);
-                if(rows == undefined) return;
+                if (rows == undefined) return;
                 for (let row of rows) {
                     result.push(new Film(row.id, row.title, row.favorite, dayjs(row.watchdate), row.rating));
                 }
@@ -143,33 +181,55 @@ async function main() {
     /*console.log("Stampa di tutti i film");
     library.getAllFilms()
         .then(library.print)
-        .catch((e) => console.error("Errore gestito: " + e.message));*/
+        .catch((e) => console.error("Errore gestito: " + e));*/
 
     /*console.log("Stampa di tutti i film preferiti");
     library.getAllFavoriteFilms()
         .then(library.print)
-        .catch((e) => console.error("Errore gestito: " + e.message));*/
+        .catch((e) => console.error("Errore gestito: " + e));*/
 
     /*console.log("Stampa di tutti i film guardati oggi");
     library.getAllFilmWatchedToday()
         .then(library.print)
-        .catch((e) => console.error("Errore gestito: " + e.message));*/
+        .catch((e) => console.error("Errore gestito: " + e));*/
 
     /*console.log("Stampa di tutti i film visti prima di oggi");
     library.getAllFilmWatchedOnSomeDate(dayjs("2023-03-17"))
         .then(library.print)
-        .catch((e) => console.error("Errore gestito: " + e.message));*/
+        .catch((e) => console.error("Errore gestito: " + e));*/
 
     /*console.log("Stampa di tutti i film con un determinato rating");
     library.getFilmWithRating(4)
         .then(library.print)
-        .catch(e => console.error("Errore gestito" + e.message));*/
+        .catch(e => console.error("Errore gestito: " + e));*/
 
-    console.log("Stampa di tutti i film con un determinato titolo");
-        library.getFilmWithTitle("s")
-            .then(library.print)
-            .catch(e => console.error("Errore gestito" + e.message));
+    /*console.log("Stampa di tutti i film con un determinato titolo");
+    library.getFilmWithTitle("s")
+        .then(library.print)
+        .catch(e => console.error("Errore gestito: " + e));*/
+
+    console.log("Aggiunta di un nuovo film");
+    let film = new Film(3, "Iron Man 3", 0, dayjs("2023048"), 2);
+
+    await library.addNewFilm(film)
+        .then(console.log("Film salvato con successo"))
+        .catch(e => console.error("Errore gestito: " + e));
+
+    console.log("Stampa di tutti i film");
+    await library.getAllFilms()
+        .then(library.print)
+        .catch((e) => console.error("Errore gestito: " + e));
+
+    await library.deleteFilm(film.id)
+        .then(console.log("Film rimosso con successo"))
+        .catch(e => console.error("Errore gestito: " + e));
+
+    console.log("Stampa di tutti i film");
+    await library.getAllFilms()
+        .then(library.print)
+        .catch((e) => console.error("Errore gestito: " + e));
+
 }
 
 main();
-db.close();
+//db.close();
