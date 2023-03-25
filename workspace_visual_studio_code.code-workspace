@@ -1,13 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "LAB/LAB_1"
-		},
-		{
 			"path": "EXERCISE"
 		},
 		{
-			"path": "LAB/LAB_2"
+			"path": "LAB"
+		},
+		{
+			"path": "aw1-weeks"
 		}
 	],
 	"settings": {}
