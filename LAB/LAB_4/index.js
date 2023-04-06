@@ -13,7 +13,7 @@ let filters = new Map([
 ]);
 let filterSelected = "all";
 
-window.addEventListener('load', allFilter());       // al caricamento completo della pagina viene eseguita la funzione
+document.addEventListener('load', allFilter());       // al caricamento della pagina viene eseguita la funzione
 
 
 
@@ -109,15 +109,13 @@ function createRow(titleValue, isFavorite, date, score, idNumber) {
     watchDate.textContent = isNaN(date) ? undefined : dayjs(date).format('MMMM DD, YYYY');
 
     deleteButton.id = titleValue;
-    deleteButton.addEventListener("click", (row) => {
-        (allFilmsList != undefined) ? allFilmsList = allFilmsList.filter((film => film.title != row.target.id)) : undefined;
-        (filterFilmsList != undefined) ? filterFilmsList = filterFilmsList.filter((film => film.title != row.target.id)) : undefined;
-        allFilmsList = undefined;
-        
-        let fun = filters.get(filterSelected);
-        fun();
-
-        console.log(row.target.id);
+    //const btnsDelete = document.querySelectorAll(".btn-delete");
+    deleteButton.addEventListener('click', () => {
+        const row = deleteButton.closest('li');
+        const title = row.lastElementChild.children[0].textContent;
+        if (allFilmsList != undefined) allFilmsList = allFilmsList.filter(film => film.title != title);
+        if (filterFilmsList != undefined) filterFilmsList = filterFilmsList.filter(film => film.title != title);
+        filters.get(filterSelected)();
     });
 
     // da 0 a al valore di score vengono modificate le stelline (valore massimo di stelle pari a 5)
@@ -141,9 +139,11 @@ function createRow(titleValue, isFavorite, date, score, idNumber) {
 
 
 async function allFilter() {
-    await library.getAllFilms()
-        .then((films) => allFilmsList = films)
-        .catch((e) => console.error("Errore gestito: " + e));
+    if (allFilmsList == undefined) {
+        await library.getAllFilms()
+            .then((films) => allFilmsList = films)
+            .catch((e) => console.error("Errore gestito: " + e));
+    }
 
     filterSelected = "all";
 
