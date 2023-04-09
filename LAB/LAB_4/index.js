@@ -205,7 +205,3 @@ async function seenLastMonthFilter() {
 
     loadFilms(filterFilmsList);
 }
-
-function deleteFilm() {
-
-}
