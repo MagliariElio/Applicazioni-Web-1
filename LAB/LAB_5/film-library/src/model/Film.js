@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 
 
-function Film(id, title, isFavorite, watchDate, score) {
+function Film(id=0, title="", isFavorite=false, watchDate=dayjs(), score=0) {
   this.id = id;                                           // id è unico
   this.title = title;
   this.isFavorite = isFavorite === undefined ? false : isFavorite;

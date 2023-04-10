@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import dayjs from 'dayjs';
+import RatingStars from "./RatingStars";
 
 
 
 function Row(props) {
+
+    const [isEditRatingStars, setIsEditRatingStars] = useState(false);            // registra se il bottone di modifica viene cliccato o meno
 
     const countStar = () => {
         let starList = [];
@@ -11,21 +14,32 @@ function Row(props) {
         const fullStar = <i className="bi bi-star-fill"></i>;
         const emptyStar = <i className="bi bi-star"></i>
 
-        if(props.film.score === undefined) props.film.score = 0;
+        if (props.film.score === undefined) props.film.score = 0;
 
         for (let i = 0; i < props.film.score; i++) {
-            starList.push({key:i, star:fullStar});
+            starList.push({ key: i, star: fullStar });
         }
 
         for (let i = props.film.score; i < maxNumberStar; i++) {
-            starList.push({key:i, star:emptyStar});
+            starList.push({ key: i, star: emptyStar });
         }
 
         return starList;
     };
 
     const handleDeleteButtonRow = () => {
-        props.onButtonDelete(props.film.id);
+        props.onButtonDelete(props.film.id)
+    };
+
+    const handleChangeFavorite = () => {
+        if (props.film.isFavorite === undefined) props.film.isFavorite = true;
+        props.handleChangeFavorite(props.film.id, !props.film.isFavorite);
+    };
+
+    const handleChangeRating = (event) => {
+        setIsEditRatingStars(false);
+        const value = parseInt(event.target.value);
+        props.handleChangeRating(props.film.id, value);
     }
 
     return (
@@ -33,18 +47,35 @@ function Row(props) {
             <div className="d-flex w-100 justify-content-between">
                 <p className={props.film.isFavorite === true ? "text-start col-md-3 col-3 favorite" : "text-start col-md-3 col-3"} id={"title" + props.film.title}>{props.film.title}</p>
                 <span className="custom-control custom-checkbox col-md-2 col-2">
-                    <input type="checkbox" className="form-check-input" id={"favorite" + props.film.title} checked={props.film.isFavorite} readOnly />
+                    <input type="checkbox" className="form-check-input" id={"favorite" + props.film.title} checked={props.film.isFavorite} onChange={handleChangeFavorite} />
                     <label className="custom-control-label" htmlFor="favorite">Favorite</label>
                 </span>
                 <small className="watch-date col-md-2 col-2" id={"watchdate" + props.film.title}>{isNaN(props.film.watchDate) ? undefined : dayjs(props.film.watchDate).format('MMMM DD, YYYY')}</small>
-                <span className="text-end col-md-3 col-2">
+                <div className="text-end col-md-3 col-2">
+
                     {
-                        countStar().map(obj => 
-                        <span key={obj.key}>
-                            {obj.star}
-                        </span>)
+                        !isEditRatingStars &&
+                        <>
+                            <span>
+                                {
+                                    countStar().map(obj =>
+                                        <span key={obj.key}>
+                                            {obj.star}
+                                        </span>)
+                                }
+                            </span>
+
+                            <span className="mx-3">
+                                <button className="btn btn-outline-secondary" onClick={() => setIsEditRatingStars(true)}>
+                                    <i className="bi bi-pencil"></i>
+                                </button>
+                            </span>
+                        </>
                     }
-                </span>
+                    <span>
+                        {isEditRatingStars && <RatingStars handleInputChange={handleChangeRating} />}
+                    </span>
+                </div>
                 <span className="text-end col-md-2 col-3">
                     <button type="button" className="btn btn-danger btn-delete" id={"deleteButton" + props.film.title} onClick={handleDeleteButtonRow}>
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"

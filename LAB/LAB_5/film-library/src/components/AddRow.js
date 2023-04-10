@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import dayjs from 'dayjs';
+import RatingStars from './RatingStars';
 
 
 function AddRow(props) {
@@ -60,39 +61,8 @@ function AddRow(props) {
                     <span className="col-md-2 col-2 watch-date">
                         <input type="date" className="form-control" id="watchdate" placeholder='Add the date' name='watchDate' onChange={handleInputChange} />
                     </span>
-                    <span className="rating col-md-2 col-2">
-
-                        <label>
-                            <input type="radio" name="score" value="1" onChange={handleInputChange} />
-                            <i className="bi bi-star icon"></i>
-                        </label>
-                        <label>
-                            <input type="radio" name="score" value="2" onChange={handleInputChange} />
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                        </label>
-                        <label>
-                            <input type="radio" name="score" value="3" onChange={handleInputChange} />
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                        </label>
-                        <label>
-                            <input type="radio" name="score" value="4" onChange={handleInputChange} />
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                        </label>
-                        <label>
-                            <input type="radio" name="score" value="5" onChange={handleInputChange} />
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                            <i className="bi bi-star icon"></i>
-                        </label>
-
+                    <span className='col-md-2 col-2'>
+                        <RatingStars handleInputChange={handleInputChange} />
                     </span>
                     <span className="text-end col-md-2 col-2">
                         <button type="submit" className="btn btn-success" id="confirmButton"> Conferma </button>

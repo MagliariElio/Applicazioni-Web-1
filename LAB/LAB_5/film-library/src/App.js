@@ -83,7 +83,38 @@ function App() {
     handleAllFilter();
   };
 
-  window.addEventListener('load', () => { setFilterList(listFilms) })
+  const handleChangeFavorite = (id, isFavorite) => {
+    setIsAddRowVisible(false);
+    let index = listFilms.findIndex(film => film.id === id);
+    let film = listFilms[index];
+    
+    let list = [...listFilms];
+    film.isFavorite = isFavorite;
+
+    if (index !== -1) list[index] = film;
+    list[index] = film;
+    
+    setListFilms(list);
+    handleAllFilter();
+  };
+
+  const handleChangeRating = (id, score) => {
+    let index = listFilms.findIndex(film => film.id === id);
+    let film = listFilms[index];
+    
+    let list = [...listFilms];
+    film.score = score;
+
+    if (index !== -1) list[index] = film;
+    list[index] = film;
+    
+    setListFilms(list);
+    handleAllFilter();
+  }
+
+  //useEffect(() => {
+    window.addEventListener('load', () => { setFilterList(listFilms) })
+  //}, [listFilms]);
 
   return (
     <>
@@ -116,6 +147,8 @@ function App() {
                     key={film.id}
                     film={film}
                     onButtonDelete={handleDeleteFilm}
+                    handleChangeFavorite={handleChangeFavorite}
+                    handleChangeRating={handleChangeRating}
                   />
                 ))
               }
