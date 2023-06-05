@@ -3,7 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './style/style.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import dayjs from 'dayjs';
@@ -124,9 +124,9 @@ function App() {
     handleAllFilter();
   }
 
-  /*useEffect(() => {
-    window.addEventListener('load', () => { setFilterList(listFilms) })
-  }, [listFilms]);*/
+  useEffect(() => {
+    window.addEventListener('load', () => { handleAllFilter(); })
+  }, [listFilms]);
 
   return (
     <BrowserRouter>

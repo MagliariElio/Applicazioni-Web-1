@@ -1,0 +1,58 @@
+# This file could be used for testing the API with Visual Studio Code
+
+
+## Retrieving all the films
+GET http://localhost:3001/api/films?filter=filter-all HTTP/1.1
+###
+
+## Retrieving a specific film specifing its id
+GET http://localhost:3001/api/films/1 HTTP/1.1
+###
+
+## Create new film (without id)
+POST http://localhost:3001/api/film/add HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Harry Potter",
+    "favorite": 1,
+    "watchDate": "{{$datetime 'YYYY-MM-DD' -15 d}}",
+    "rating": 4,
+    "user": 1
+}
+###
+
+## Update film with a specific id
+PUT http://localhost:3001/api/update/6 HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Harry Potter 2",
+    "favorite": 1,
+    "watchDate": "{{$datetime 'YYYY-MM-DD' -15 d}}",
+    "rating": 5,
+    "user": 1
+}
+###
+
+## Update rating of a film
+PUT http://localhost:3001/api/update/7/rating HTTP/1.1
+content-type: application/json
+
+{
+    "rating": 3
+}
+###
+
+## Marks a film as favorite/unfavorite
+PUT http://localhost:3001/api/update/8/favorite HTTP/1.1
+content-type: application/json
+
+{
+    "favorite": 1
+}
+###
+
+## Remove film with a specific id
+DELETE http://localhost:3001/api/remove/2 HTTP/1.1
+###
